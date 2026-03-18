@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Prep & Portion",
-  description: "Simple kitchen tools for real-life cooking.",
+  title: "Prep & Portion – Turn Recipes Into Grocery Lists Instantly",
+  description:
+    "Paste any recipe and instantly get a clean, organized grocery list sorted by aisle. Save time, reduce waste, and cook smarter.",
 };
 
 export default function RootLayout({
