@@ -12,10 +12,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Prep & Portion – Turn Recipes Into Grocery Lists Instantly",
+export const metadata = {
+  title: "Kitchen Cue | What’s for Dinner? Easy Meal Ideas in Seconds",
   description:
-    "Paste any recipe and instantly get a clean, organized grocery list sorted by aisle. Save time, reduce waste, and cook smarter.",
+    "Get instant dinner ideas based on ingredients you already have or your mood. Fast, simple, family-friendly meals with grocery lists and steps.",
 };
 
 export default function RootLayout({

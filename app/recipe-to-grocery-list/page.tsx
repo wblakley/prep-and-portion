@@ -4,9 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 const categoryMap: Record<string, string> = {
-
   /* ---------- PRODUCE ---------- */
-
   apple: "Produce",
   apples: "Produce",
   banana: "Produce",
@@ -53,7 +51,6 @@ const categoryMap: Record<string, string> = {
   cabbage: "Produce",
 
   /* ---------- MEAT & SEAFOOD ---------- */
-
   chicken: "Meat & Seafood",
   beef: "Meat & Seafood",
   pork: "Meat & Seafood",
@@ -77,7 +74,6 @@ const categoryMap: Record<string, string> = {
   tilapia: "Meat & Seafood",
 
   /* ---------- DAIRY & EGGS ---------- */
-
   milk: "Dairy & Eggs",
   butter: "Dairy & Eggs",
   cheese: "Dairy & Eggs",
@@ -95,7 +91,6 @@ const categoryMap: Record<string, string> = {
   ricotta: "Dairy & Eggs",
 
   /* ---------- PANTRY ---------- */
-
   flour: "Pantry",
   sugar: "Pantry",
   salt: "Pantry",
@@ -105,10 +100,10 @@ const categoryMap: Record<string, string> = {
   noodles: "Pantry",
   "olive oil": "Pantry",
   vinegar: "Pantry",
- "chicken broth": "Pantry",
- "beef broth": "Pantry",
- "vegetable broth": "Pantry",
- "mushroom broth": "Pantry",
+  "chicken broth": "Pantry",
+  "beef broth": "Pantry",
+  "vegetable broth": "Pantry",
+  "mushroom broth": "Pantry",
   beans: "Pantry",
   lentils: "Pantry",
   quinoa: "Pantry",
@@ -131,9 +126,7 @@ const categoryMap: Record<string, string> = {
   spice: "Pantry",
   "tortilla chips": "Pantry",
 
-
   /* ---------- BAKERY ---------- */
-
   bread: "Bakery",
   buns: "Bakery",
   bagel: "Bakery",
@@ -142,7 +135,6 @@ const categoryMap: Record<string, string> = {
   croissant: "Bakery",
 
   /* ---------- SNACKS ---------- */
-
   cookies: "Snacks",
   chips: "Snacks",
   crackers: "Snacks",
@@ -154,25 +146,24 @@ const categoryMap: Record<string, string> = {
   bar: "Snacks",
 
   /* ---------- FROZEN ---------- */
-
   "ice cream": "Frozen",
   frozen: "Frozen",
   pizza: "Frozen",
   nuggets: "Frozen",
 
   /* ---------- PET ---------- */
-
   "dog food": "Pet",
   "cat food": "Pet",
   litter: "Pet",
 };
 
 type GroceryGroups = Record<string, string[]>;
+
 function cleanIngredient(line: string) {
   return line
     .toLowerCase()
-    .replace(/\([^)]*\)/g, "") // remove parenthetical notes
-    .replace(/\b\d+([\/.]\d+)?\b/g, "") // remove numbers like 1, 2, 1/2, 1.5
+    .replace(/\([^)]*\)/g, "")
+    .replace(/\b\d+([\/.]\d+)?\b/g, "")
     .replace(
       /\b(cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|lbs|pound|pounds|clove|cloves|can|cans|package|packages|pkg|pkgs|bag|bags|slice|slices|stick|sticks)\b/g,
       ""
@@ -181,13 +172,13 @@ function cleanIngredient(line: string) {
       /\b(diced|chopped|minced|large|small|medium|fresh|boneless|skinless|ground|shredded|grated)\b/g,
       ""
     )
-    .replace(/\s+/g, " ") // collapse extra spaces
+    .replace(/\s+/g, " ")
     .trim();
 }
 
 export default function RecipeToGroceryListPage() {
   const [ingredients, setIngredients] = useState("");
-const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const groupedList = useMemo(() => {
     const lines = ingredients
@@ -195,39 +186,40 @@ const [copied, setCopied] = useState(false);
       .map((line) => line.trim())
       .filter(Boolean);
 
-      const groups: GroceryGroups = {
-        Produce: [],
-        "Meat & Seafood": [],
-        "Dairy & Eggs": [],
-        Pantry: [],
-        Bakery: [],
-        Snacks: [],
-        Pet: [],
-        Other: [],
-        Frozen: [],
-      };
+    const groups: GroceryGroups = {
+      Produce: [],
+      "Meat & Seafood": [],
+      "Dairy & Eggs": [],
+      Pantry: [],
+      Bakery: [],
+      Snacks: [],
+      Pet: [],
+      Other: [],
+      Frozen: [],
+    };
 
-      lines.forEach((line) => {
-        const cleanedLine = cleanIngredient(line);
-        let matchedCategory = "Other";
-      
-        for (const key in categoryMap) {
-          if (cleanedLine.includes(key)) {
-            matchedCategory = categoryMap[key];
-            break;
-          }
+    lines.forEach((line) => {
+      const cleanedLine = cleanIngredient(line);
+      let matchedCategory = "Other";
+
+      for (const key in categoryMap) {
+        if (cleanedLine.includes(key)) {
+          matchedCategory = categoryMap[key];
+          break;
         }
-      
-        groups[matchedCategory].push(cleanedLine || line);
-      });
+      }
+
+      groups[matchedCategory].push(cleanedLine || line);
+    });
 
     return groups;
   }, [ingredients]);
 
   const hasItems = Object.values(groupedList).some((items) => items.length > 0);
+
   const copyList = () => {
     let text = "";
-  
+
     Object.entries(groupedList).forEach(([category, items]) => {
       if (items.length > 0) {
         text += category.toUpperCase() + "\n";
@@ -237,51 +229,62 @@ const [copied, setCopied] = useState(false);
         text += "\n";
       }
     });
-  
+
     navigator.clipboard.writeText(text);
-  
+
     setCopied(true);
-  
+
     setTimeout(() => {
       setCopied(false);
     }, 2000);
   };
 
   return (
-    <main className="min-h-screen bg-[#f5eee4] text-[#3e2f23]">
-      <section className="mx-auto max-w-6xl px-6 py-10 md:px-8 md:py-14">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="mb-2 inline-block rounded-full border border-[#d8c3ad] bg-[#fffaf3] px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-[#8a5a32] shadow-sm">
-              Prep &amp; Portion
-            </p>
+    <main className="min-h-screen bg-orange-50 px-6 py-10 text-gray-900">
+      <section className="mx-auto max-w-6xl">
+        <nav className="mb-8 flex flex-col gap-4 rounded-2xl border border-orange-200 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-lg font-bold text-gray-900">Kitchen Cue</div>
 
-            <h1 className="text-4xl font-bold leading-tight text-[#2f241b] md:text-5xl">
-              Recipe → Grocery List
-            </h1>
+          <div className="flex flex-wrap gap-3 text-sm font-medium">
+            <Link
+              href="/"
+              className="rounded-full border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+            >
+              Dinner Ideas
+            </Link>
 
-            <p className="mt-3 max-w-2xl text-base leading-7 text-[#5f5145] md:text-lg">
-              Paste your ingredient list below and instantly sort it into a clean,
-              organized grocery list.
-            </p>
+            <Link
+              href="/recipe-to-grocery-list"
+              className="rounded-full bg-orange-100 px-4 py-2 text-orange-700 transition hover:bg-orange-200"
+            >
+              Grocery List Tool
+            </Link>
           </div>
+        </nav>
 
-          <Link
-            href="/"
-            className="inline-flex items-center rounded-2xl border border-[#d8c3ad] bg-[#fffaf3] px-5 py-3 text-sm font-semibold text-[#6f4a2f] shadow-sm transition hover:bg-[#f8efe4]"
-          >
-            ← Back Home
-          </Link>
+        <div className="mb-8 text-center">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">
+            Grocery list in seconds
+          </p>
+
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            Recipe to Grocery List
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-2xl text-base text-gray-600 sm:text-lg">
+            Paste your ingredient list and instantly sort it into a clean,
+            organized grocery list you can actually use at the store.
+          </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[32px] border border-[#dfcbb6] bg-[#fffaf3] p-6 shadow-[0_24px_70px_rgba(62,47,35,0.14)] md:p-8">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-orange-200 bg-white p-6 shadow-sm sm:p-8">
             <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-bold text-[#2f241b]">
+              <h2 className="text-2xl font-bold text-gray-900">
                 Paste Ingredients
               </h2>
 
-              <span className="rounded-full bg-[#efe1cf] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a5a32]">
+              <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">
                 Step 1
               </span>
             </div>
@@ -295,47 +298,47 @@ const [copied, setCopied] = useState(false);
 1 cup milk
 1 tsp salt
 2 carrots`}
-              className="min-h-[340px] w-full rounded-[24px] border border-[#e1cfbc] bg-white p-5 text-base text-[#2f241b] outline-none placeholder:text-[#9a8a7a]"
+              className="min-h-[340px] w-full rounded-xl border border-gray-300 bg-white p-5 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-400"
             />
 
-            <p className="mt-4 text-sm leading-6 text-[#7a6858]">
+            <p className="mt-4 text-sm text-gray-600">
               Put one ingredient per line for the cleanest results.
             </p>
           </div>
 
-          <div className="rounded-[32px] border border-[#e5d4c2] bg-[#fcf6ee] p-6 shadow-[0_18px_50px_rgba(62,47,35,0.09)] md:p-8">
-          <div className="mb-5 flex items-center justify-between gap-3">
-  <div className="flex items-center gap-3">
-    <h2 className="text-2xl font-bold text-[#2f241b]">
-      Organized Grocery List
-    </h2>
+          <div className="rounded-2xl border border-orange-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Organized Grocery List
+                </h2>
 
-    <span className="rounded-full bg-[#efe1cf] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a5a32]">
-      Step 2
-    </span>
-  </div>
+                <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">
+                  Step 2
+                </span>
+              </div>
 
-  {hasItems && (
-  <div className="flex gap-2">
-    <button
-      onClick={copyList}
-      className="rounded-xl bg-[#8b5e3c] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#744b2d]"
-    >
-      {copied ? "Copied!" : "Copy List"}
-    </button>
+              {hasItems && (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={copyList}
+                    className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600"
+                  >
+                    {copied ? "Copied!" : "Copy List"}
+                  </button>
 
-    <button
-      onClick={() => setIngredients("")}
-      className="rounded-xl border border-[#d8c3ad] bg-white px-4 py-2 text-sm font-semibold text-[#6f4a2f] hover:bg-[#f5eee4]"
-    >
-      Clear Ingredients
-    </button>
-  </div>
-)}
-</div>
+                  <button
+                    onClick={() => setIngredients("")}
+                    className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  >
+                    Clear Ingredients
+                  </button>
+                </div>
+              )}
+            </div>
 
             {!hasItems ? (
-              <div className="rounded-[24px] border border-dashed border-[#dbc7b0] bg-[#fffaf3] p-6 text-[#6c5a4b]">
+              <div className="rounded-xl border border-dashed border-orange-200 bg-orange-50 p-6 text-gray-600">
                 Your organized grocery list will appear here once you paste ingredients.
               </div>
             ) : (
@@ -343,22 +346,22 @@ const [copied, setCopied] = useState(false);
                 {Object.entries(groupedList).map(([category, items]) =>
                   items.length > 0 ? (
                     <div key={category}>
-                      <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.14em] text-[#8a5a32]">
+                      <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.14em] text-orange-700">
                         {category}
                       </h3>
 
                       <div className="space-y-2">
                         {items.map((item, index) => (
                           <label
-                          key={`${category}-${index}`}
-                          className="flex items-center gap-3 rounded-2xl border border-[#eadbc9] bg-white px-4 py-3 text-[15px] text-[#4b3a2d] shadow-sm"
-                        >
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 accent-[#8b5e3c]"
-                          />
-                          <span>{item}</span>
-                        </label>
+                            key={`${category}-${index}`}
+                            className="flex items-center gap-3 rounded-xl border border-orange-100 bg-orange-50 px-4 py-3 text-[15px] text-gray-800"
+                          >
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 accent-orange-500"
+                            />
+                            <span>{item}</span>
+                          </label>
                         ))}
                       </div>
                     </div>
@@ -368,6 +371,24 @@ const [copied, setCopied] = useState(false);
             )}
           </div>
         </div>
+
+        <section className="mx-auto mt-16 max-w-3xl space-y-4 text-gray-700">
+          <h2 className="text-2xl font-bold">
+            Turn Any Recipe Into a Cleaner Grocery List
+          </h2>
+
+          <p>
+            Kitchen Cue helps you take a messy recipe ingredient list and organize
+            it into grocery-store-friendly categories like produce, pantry, dairy,
+            and meat. It saves time, cuts chaos, and makes shopping easier.
+          </p>
+
+          <p>
+            Paste ingredients one per line, and your grocery list is grouped for
+            you automatically. It is simple, fast, and perfect for busy weeknights,
+            meal planning, and last-minute grocery runs.
+          </p>
+        </section>
       </section>
     </main>
   );
