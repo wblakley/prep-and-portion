@@ -22,26 +22,13 @@ User input: "${input}"
 
 Generate exactly 3 realistic dinner ideas.
 
-Return them as JSON in this format:
-{
-  "meals": [
-    {
-      "title": "Meal name",
-      "cookTime": "30 minutes",
-      "description": "Short, appealing one-sentence description.",
-      "ingredients": ["item 1", "item 2", "item 3"],
-      "steps": ["step 1", "step 2", "step 3"]
-    }
-  ]
-}
-
 Rules:
 - Keep meals simple and family-friendly
 - No fancy chef wording
 - Make them realistic for a weeknight
 - Use 3 to 6 ingredients per meal when possible
 - Use 3 to 5 short steps per meal
-- Return only valid JSON
+- Return only the requested structured data
 `;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -54,19 +41,75 @@ Rules:
         model: "gpt-4o-mini",
         messages: [
           {
+            role: "system",
+            content:
+              "You are a meal generator that returns structured recipe data only.",
+          },
+          {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.8,
+        temperature: 0.7,
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "dinner_meals",
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                meals: {
+                  type: "array",
+                  minItems: 3,
+                  maxItems: 3,
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      title: { type: "string" },
+                      cookTime: { type: "string" },
+                      description: { type: "string" },
+                      ingredients: {
+                        type: "array",
+                        items: { type: "string" },
+                      },
+                      steps: {
+                        type: "array",
+                        items: { type: "string" },
+                      },
+                    },
+                    required: [
+                      "title",
+                      "cookTime",
+                      "description",
+                      "ingredients",
+                      "steps",
+                    ],
+                  },
+                },
+              },
+              required: ["meals"],
+            },
+          },
+        },
       }),
     });
 
     const data = await response.json();
 
+    if (!response.ok) {
+      console.error("OpenAI API error:", data);
+      return NextResponse.json(
+        { error: "AI request failed. Please try again." },
+        { status: 500 }
+      );
+    }
+
     const content = data?.choices?.[0]?.message?.content;
 
     if (!content) {
+      console.error("No content returned from OpenAI:", data);
       return NextResponse.json(
         { error: "No response from AI." },
         { status: 500 }
@@ -77,9 +120,10 @@ Rules:
 
     try {
       parsed = JSON.parse(content);
-    } catch {
+    } catch (error) {
+      console.error("Invalid JSON from AI:", content, error);
       return NextResponse.json(
-        { error: "AI returned invalid JSON.", raw: content },
+        { error: "Hmm... something went wrong. Please try again." },
         { status: 500 }
       );
     }
