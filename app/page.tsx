@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect,useState } from "react";
 
 type Meal = {
   title: string;
@@ -16,6 +16,30 @@ export default function HomePage() {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const loadingMessages = [
+    "Looking at your ingredients...",
+    "Picking dinner ideas...",
+    "Writing quick recipes...",
+  ];
+  
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingStep(0);
+      return;
+    }
+  
+    const timers = [
+      setTimeout(() => setLoadingStep(1), 2500),
+      setTimeout(() => setLoadingStep(2), 5000),
+    ];
+  
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [loading]);
 
   const generateMeals = async () => {
     if (!input.trim()) {
@@ -59,6 +83,18 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-orange-50 px-6 py-10 text-gray-900">
+      {loading && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+    <div className="flex flex-col items-center gap-4 rounded-2xl bg-white px-8 py-6 shadow-lg">
+      
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-200 border-t-orange-500"></div>
+      
+      <p className="text-sm font-medium text-gray-700">
+      {loadingMessages[loadingStep]}
+      </p>
+    </div>
+  </div>
+)}
       <div className="mx-auto max-w-4xl">
       <nav className="mb-8 flex flex-col gap-4 rounded-2xl border border-orange-200 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
   <div className="text-lg font-bold text-gray-900">Kitchen Cue</div>
