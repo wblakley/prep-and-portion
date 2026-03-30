@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
 
 type Meal = {
@@ -51,6 +52,8 @@ export default function HomePage() {
     setLoading(true);
     setError("");
     setMeals([]);
+
+    track("Generate Meals Clicked");
 
     try {
       const res = await fetch("/api/dinner", {
