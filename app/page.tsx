@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
 
 type Meal = {
@@ -53,8 +52,11 @@ export default function HomePage() {
     setError("");
     setMeals([]);
 
-    track("Generate Meals Clicked");
-
+    fetch("/api/track", {
+      method: "POST",
+    }).catch((err) => {
+      console.error("Tracking failed:", err);
+    });
     try {
       const res = await fetch("/api/dinner", {
         method: "POST",
@@ -150,15 +152,15 @@ export default function HomePage() {
             What’s in your kitchen?
           </label>
 
-          <p className="mb-3 text-sm text-gray-600">
-            👇 Try it with what you already have
+          <p className="mb-3 text-sm font-medium text-gray-700">
+          👇 Type 3 ingredients you already have, then tap the button.
           </p>
 
           <textarea
             id="dinner-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="chicken, pasta, garlic... or easy & quick"
+            placeholder="Example: chicken, rice, broccoli"
             className="min-h-[120px] w-full rounded-xl border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-orange-400"
           />
 
@@ -168,15 +170,15 @@ export default function HomePage() {
               disabled={loading}
               className="rounded-xl bg-orange-500 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-orange-600 hover:shadow disabled:cursor-not-allowed disabled:opacity-60 motion-safe:animate-pulse"
             >
-              {loading ? "Working on it..." : "Get Dinner Ideas 🍽️"}
+              {loading ? "Finding meals for you..." : "Generate 3 Dinner Ideas →"}
             </button>
 
             
           </div>
 
-          <p className="mt-3 text-sm text-gray-500">
-            Takes a few seconds. No signup. Free.
-          </p>
+          <p className="mt-3 text-sm text-gray-600">
+    ⚡ 3 meal ideas • 🛒 Simple ingredients • ⏱ Quick steps
+        </p>
 
           {error && (
             <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
