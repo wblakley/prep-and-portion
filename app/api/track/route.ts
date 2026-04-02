@@ -3,7 +3,13 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    let body: any = {};
+
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
 
     const event = body?.event ?? "unknown_event";
     const page = body?.page ?? null;
