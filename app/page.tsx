@@ -52,8 +52,15 @@ export default function HomePage() {
     setError("");
     setMeals([]);
 
-    fetch("/api/track", {
+    await fetch("/api/track", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event: "generate_meals_click",
+        page: "dinner_generator",
+      }),
     }).catch((err) => {
       console.error("Tracking failed:", err);
     });
