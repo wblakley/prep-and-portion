@@ -291,7 +291,17 @@ export default function RecipeToGroceryListPage() {
 
             <textarea
               value={ingredients}
-              onChange={(e) => setIngredients(e.target.value)}
+              onChange={async (e) => {
+                setIngredients(e.target.value);
+              
+                await fetch('/api/track', {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    event: 'grocery_input_used',
+                    page: 'recipe_to_grocery'
+                  }),
+                });
+              }}
               placeholder={`2 chicken breasts
 1 onion
 2 cups rice
