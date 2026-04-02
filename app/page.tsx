@@ -1,5 +1,5 @@
 "use client";
-
+import confetti from "canvas-confetti";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -104,6 +104,10 @@ export default function HomePage() {
             <p className="text-sm font-medium text-gray-700">
               {loadingMessages[loadingStep]}
             </p>
+
+            <p className="text-xs text-gray-500">
+         This usually takes about 5-10 seconds
+          </p>
           </div>
         </div>
       )}
